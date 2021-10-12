@@ -1,0 +1,433 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+</html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zone Info Calculator</title>
+
+    <style>
+        html,
+        body {
+            background-color: azure;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 96%;
+        }
+
+        .column {
+            float: left;
+            width: 50%;
+        }
+
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        input {
+            border: none;
+            background-color: azure;
+        }
+
+        button {
+            border-radius: 5px;
+            background-color: lightsteelblue;
+        }
+
+        table {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        th {
+            border: 1px solid black;
+            border-collapse: collapse;
+            background-color: steelblue;
+            width: 115px;
+        }
+        
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            background-color: lightsteelblue;
+            width: 115px;
+        }
+
+        .tableInput {
+            background-color: lightsteelblue;
+            width: 90%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="column" style="margin: 0 auto;">
+        <h1>Input</h1>
+        <h3>Zone</h3>
+        <p>Level: <input id="input_zone" type="number" onchange="updateInput('zone')" value=1 min=1 max=2147483647
+                pattern="\d*" /></p>
+        <p>Transcendent Power: <input id="input_tp" type="number" onchange="updateTPInput()" step=0.01 value=2 min=0 max=25
+                pattern="\d*" />% (set to 0% to ignore)</p>
+        <h3>Ancients</h3>
+        <table>
+            <tr>
+                <th>Ancient</th>
+                <th>Level</th>
+            </tr>
+            <tr>
+                <td>Kumawakamaru</td>
+                <td><input id="input_kumawakamaru" class="tableInput" type="number" onchange="updateInput('kumawakamaru')" value=0 min=0
+                        max=1498 pattern="\d*" /></td>
+            </tr>
+            <tr>
+                <td>Atman</td>
+                <td><input id="input_atman" class="tableInput" type="number" onchange="updateInput('atman')" value=0 min=0 max=2880
+                        pattern="\d*" /></td>
+            </tr>
+            <tr>
+                <td>Bubos</td>
+                <td><input id="input_bubos" class="tableInput" type="number" onchange="updateInput('bubos')" value=0 min=0 max=18715
+                        pattern="\d*" /></td>
+            </tr>
+            <tr>
+                <td>Chronos</td>
+                <td><input id="input_chronos" class="tableInput" type="number" onchange="updateInput('chronos')" value=0 min=0 max=1101
+                        pattern="\d*" /></td>
+            </tr>
+            <tr>
+                <td>Dora</td>
+                <td><input id="input_dora" class="tableInput" type="number" onchange="updateInput('dora')" value=0 min=0 max=18715
+                        pattern="\d*" /></td>
+            </tr>
+        </table>
+
+        <h3>Outsiders</h3>
+        <table>
+            <tr>
+                <th>Outsider</th>
+                <th>Level</th>
+            </tr>
+            <tr>
+                <td>Ponyboy</td>
+                <td><input id="input_ponyboy" class="tableInput" type="number" onchange="updateInput('ponyboy')" value=0 min=0
+                        max=2147483647 pattern="\d*" /></td>
+            </tr>
+            <tr>
+                <td>Borb</td>
+                <td><input id="input_borb" class="tableInput" type="number" onchange="updateInput('borb')" value=0 min=0 max=2147483647
+                        pattern="\d*" /></td>
+            </tr>
+            <tr>
+                <td>Rhageist</td>
+                <td><input id="input_rhageist" class="tableInput" type="number" onchange="updateInput('rhageist')" value=0 min=0
+                        max=2147483647 pattern="\d*" /></td>
+            </tr>
+            <tr>
+                <td>K'Ariqua</td>
+                <td><input id="input_kariqua" class="tableInput" type="number" onchange="updateInput('kariqua')" value=0 min=0
+                        max=2147483647 pattern="\d*" /></td>
+            </tr>
+            <tr>
+                <td>Orphalas</td>
+                <td><input id="input_orphalas" class="tableInput" type="number" onchange="updateInput('orphalas')" value=0 min=0
+                        max=2147483647 pattern="\d*" /></td>
+            </tr>
+            <tr>
+                <td>Sen-Akhan</td>
+                <td><input id="input_senAkhan" class="tableInput" type="number" onchange="updateInput('senAkhan')" value=0 min=0
+                        max=2147483647 pattern="\d*" /></td>
+            </tr>
+        </table>
+        <button style="margin-top: 10px;" onclick="submit()">Get Zone Stats</button>
+    </div>
+
+    <div class="column" style="margin: 0 auto;">
+        <h1>Output</h1>
+        <h3>Zone Info</h3>
+        <p>Level: <label id="output_zone">???</label></p>
+        <p>Health: <label id="output_health">???</label></p>
+        <p>Hero Souls: <label id="output_souls">???</label></p>
+        <table>
+            <tr>
+                <th>Stat</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>MPZ</td>
+                <td><label id="output_mpz">???</label></td>
+            </tr>
+            <tr>
+                <td>Primal Chance</td>
+                <td><label id="output_pbc">???</label></td>
+            </tr>
+            <tr>
+                <td>Boss Health</td>
+                <td><label id="output_bossMultiplier">???</label></td>
+            </tr>
+            <tr>
+                <td>Boss Timer</td>
+                <td><label id="output_bossTimer">???</label></td>
+            </tr>
+            <tr>
+                <td>Treasure Chest Chance</td>
+                <td><label id="output_tcc">???</label></td>
+            </tr>
+        </table>
+    </div>
+
+    <script src='bignumber.js'></script>
+    <script>
+        // PROGRAMMED BY PURPMOGUS
+
+        let ancients = {
+            atman: 0,
+            bubos: 0,
+            chronos: 0,
+            dora: 0,
+            kumawakamaru: 0
+        }
+
+        let outsiders = {
+            rhageist: 0,
+            kariqua: 0,
+            orphalas: 0,
+            senAkhan: 0,
+            borb: 0,
+        }
+
+        let cachedHealth = {}
+        cachedHealth[500] = getMonsterHealth(500);
+
+        function getMonsterHealth(zone) {
+            let isBossZone = (zone % 5 == 0);
+            let zoneMinusOne = zone - 1
+            let zoneLinear = 139;
+            let healthAt200k = "1.240e25409";
+            let health;
+
+            if (zone <= 140) {
+                zoneLinear = zoneMinusOne;
+                let zoneScaler = new BigNumber(1.55).exponentiatedBy(zoneMinusOne);
+                health = new BigNumber(10).multipliedBy(zoneScaler);
+            } else if (zone <= 500) {
+                let zoneBefore = new BigNumber(1.55).exponentiatedBy(139);
+                let zoneScaler = new BigNumber(1.145).exponentiatedBy(zoneMinusOne - 139);
+                health = new BigNumber(10).multipliedBy(zoneBefore.multipliedBy(zoneScaler));
+            } else if (zone <= 200000) {
+                let zoneBeforeFirst = new BigNumber(1.55).exponentiatedBy(139);
+                let zoneBeforeSecond = new BigNumber(1.145).exponentiatedBy(360);
+                let fiveHundredsHealth = getHealthByFiveHundreds(Math.floor(zone / 500) * 500);
+                let zoneBase = new BigNumber(1.145 + (0.001 * Math.floor(zone / 500)));
+                health = zoneBase.exponentiatedBy(zone - (Math.floor(zone / 500) * 500)).multipliedBy(fiveHundredsHealth);
+            } else {
+                let zoneBefore = new BigNumber(healthAt200k);
+                let zoneScaler = new BigNumber(1.545).exponentiatedBy(zoneMinusOne - 200000);
+                health = zoneScaler.multipliedBy(zoneBefore);
+            }
+
+            health = health.plus(zoneLinear * 10)
+            if (isBossZone) health = health.multipliedBy(getBossHealthMultiplier(zone));
+            return health.integerValue(0);
+        }
+
+        function getHealthByFiveHundreds(zone) {
+            if (typeof cachedHealth[zone] == 'undefined') {
+                let base = 1.145 + (0.001 * (Math.floor(zone / 500) - 1));
+                let val = new BigNumber(base).exponentiatedBy(500).multipliedBy(getHealthByFiveHundreds(zone - 500));
+                cachedHealth[zone] = val;
+            }
+            return cachedHealth[zone];
+        }
+
+        function formatValue(numberParam) {
+            number = BigNumber(numberParam);
+            if (number.isGreaterThanOrEqualTo('1e68')) {
+                return number.toExponential(3, 1).replace('+', '');
+            } else {
+                let symbols = ["", "K", "M", "B", "T", "q", "Q", "s", "S", "O", "N", "d", "U", "D", "!", "@", "#", "$", "%", "^", "&", "*"]
+                for (sym = 0; number.isGreaterThanOrEqualTo('1.0e+5'); sym++) {
+                    number = number.dividedBy('1e3');
+                }
+                var outputValue = number.integerValue(1).toNumber();
+
+                separator = new Intl.NumberFormat('en-US');
+                outputValue = separator.format(outputValue);
+                var returnString = outputValue + "" + symbols[sym]
+
+                return returnString;
+            }
+        }
+
+        function getPrimalHeroSouls(zone) {
+            if (zone % 5 != 0 || zone < 100) {
+                return new BigNumber(0);
+            } else if (zone == 100) {
+                return new BigNumber(1);
+            } else {
+                let pbnum = (zone / 5) - 20
+                let tp = getTPInput();
+                let baseHeroSoulAmount = new BigNumber(((zone - 80) / 25) ** 1.3);
+                let transcendentAmount;
+                if (tp == 0) {
+                    transcendentAmount = new BigNumber(0)
+                } else {
+                    transcendentAmount = new BigNumber(20).multipliedBy(new BigNumber(1 + (tp / 100)).exponentiatedBy(pbnum));
+                }
+                let ponyboyAmount = 1 + (10 * (outsiders.ponyboy ** 2));
+
+                return baseHeroSoulAmount.plus(transcendentAmount).multipliedBy(ponyboyAmount);
+            }
+        }
+
+        // Zone Scaling
+        function getPrimalBossChance(zone) {
+            let baseChance = 25;
+            let atmanAmount = diminishingReturns(75, -0.013, ancients.atman);
+            let rhageistAmount = 1 + (0.25 * outsiders.rhageist);
+            let numberOfDecreases = Math.floor(zone / 500);
+
+            let primalBossChance = (baseChance + (atmanAmount * rhageistAmount)) - (2 * numberOfDecreases);
+            if (primalBossChance < 5) primalBossChance = 5;
+            return primalBossChance;
+        }
+
+        function getBossHealthMultiplier(zone) {
+            let baseMultiplier = 10;
+            let bubosAmount = diminishingReturns(5, -0.002, ancients.bubos);
+            let kariquaAmount = 1 + (0.5 * outsiders.kariqua);
+            let numberOfDecreases = Math.floor(zone / 500);
+
+            let multiplier = (baseMultiplier - (bubosAmount * kariquaAmount)) + (0.4 * numberOfDecreases);
+            if (multiplier < 5) multiplier = 5;
+            return multiplier;
+        }
+
+        function getBossTimer(zone) {
+            let baseTimer = 30;
+            let chronosAmount = diminishingReturns(30, -0.034, ancients.chronos);
+            let orphalasAmount = 1 + (0.75 * outsiders.orphalas);
+            let numberOfDecreases = Math.floor(zone / 500);
+
+            let bossTimer = (baseTimer + (chronosAmount * orphalasAmount)) - (2 * numberOfDecreases);
+            if (bossTimer < 2) bossTimer = 2;
+            return bossTimer;
+        }
+
+        function getTreasureChestChance(zone) {
+            let baseTCC = 1;
+            let doraAmount = diminishingReturns(99, -0.002, ancients.dora);
+            let senAkhanAmount = 1 + (1 * outsiders.senAkhan);
+            let numberOfDecreases = Math.floor(zone / 500);
+
+            let treasureChestChance = (baseTCC + (doraAmount * senAkhanAmount)) * (0.994 ** numberOfDecreases);
+            if (treasureChestChance < 1) treasureChestChance = 1;
+            return treasureChestChance;
+        }
+
+        function getMonstersPerZone(zone) {
+            let baseMPZ = 10;
+            let kumaAmount = diminishingReturns(8, -0.025, ancients.kumawakamaru);
+            let borbAmount = 1 + (0.125 * outsiders.borb);
+            let numberOfDecreases = Math.floor(zone / 500);
+
+            let monstersPerZone = (baseMPZ - (kumaAmount * borbAmount)) + (0.1 * numberOfDecreases);
+            if (monstersPerZone < 2) monstersPerZone = 2;
+            return monstersPerZone;
+        }
+
+        function diminishingReturns(value, scale, amount) {
+            return value * (1 - Math.E ** (scale * amount))
+        }
+
+        function updateInput(input) {
+            element = document.getElementById("input_" + input);
+
+            let numericValue = parseInt(element.value);
+            let minValue = parseInt(element.min);
+            let maxValue = parseInt(element.max);
+            if (isNaN(numericValue)) numericValue = minValue;
+
+            numericValue = Math.ceil(numericValue);
+            if (numericValue < minValue) numericValue = minValue;
+            if (numericValue > maxValue) numericValue = maxValue;
+            element.value = numericValue;
+        }
+
+        function getInput(input) {
+            element = document.getElementById("input_" + input);
+
+            let numericValue = parseInt(element.value);
+            let minValue = parseInt(element.min);
+            let maxValue = parseInt(element.max);
+            if (isNaN(numericValue)) numericValue = minValue;
+
+            return numericValue;
+        }
+
+        function updateTPInput() {
+            element = document.getElementById("input_tp");
+
+            let numericValue = parseFloat(element.value);
+            let minValue = parseFloat(element.min);
+            let maxValue = parseFloat(element.max);
+            if (isNaN(numericValue)) numericValue = minValue;
+
+            numericValue = Math.ceil(numericValue * 100) / 100;
+            if (numericValue < minValue) numericValue = minValue;
+            if (numericValue > maxValue) numericValue = maxValue;
+            element.value = numericValue;
+        }
+
+        function getTPInput() {
+            element = document.getElementById("input_tp");
+
+            let numericValue = parseFloat(element.value);
+            let minValue = parseFloat(element.min);
+            let maxValue = parseFloat(element.max);
+            if (isNaN(numericValue)) numericValue = minValue;
+
+            return numericValue;
+        }
+
+        function updateOutput(output, value) {
+            element = document.getElementById("output_" + output);
+            element.innerHTML = value;
+        }
+
+        function submit() {
+            // ANCIENTS
+            let zone = getInput('zone');
+            ancients.atman = getInput('atman');
+            ancients.bubos = getInput('bubos');
+            ancients.chronos = getInput('chronos');
+            ancients.dora = getInput('dora');
+            ancients.kumawakamaru = getInput('kumawakamaru');
+
+            outsiders.ponyboy = getInput('ponyboy')
+            outsiders.rhageist = getInput('rhageist');
+            outsiders.kariqua = getInput('kariqua');
+            outsiders.orphalas = getInput('orphalas');
+            outsiders.senAkhan = getInput('senAkhan');
+            outsiders.borb = getInput('borb');
+
+            updateOutput('zone', zone);
+            updateOutput('health', formatValue(getMonsterHealth(zone)) + " HP");
+            updateOutput('souls', formatValue(getPrimalHeroSouls(zone)) + " Hero Soul")
+            updateOutput('mpz', getMonstersPerZone(zone).toFixed(2));
+            updateOutput('pbc', getPrimalBossChance(zone).toFixed(2) + "%");
+            updateOutput('bossMultiplier', getBossHealthMultiplier(zone).toFixed(2) + "x");
+            updateOutput('bossTimer', getBossTimer(zone).toFixed(2) + " sec");
+            updateOutput('tcc', getTreasureChestChance(zone).toFixed(2) + "%");
+        }
+
+        submit();
+    </script>
+</body>
+
+</html>
